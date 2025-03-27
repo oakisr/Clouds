@@ -1,7 +1,6 @@
 import sqlite3 from "sqlite3";
 import { createPool, Pool } from 'generic-pool';
-import { USERS_DB } from "../utils/paths";
-
+import { fileSystem } from "./fileSystem";
 
 /**
  * @class SQLite management module.
@@ -13,7 +12,7 @@ import { USERS_DB } from "../utils/paths";
  * cleanly shut down the pool when your application is terminating.
  * @property {Pool<sqlite3.Database> | null} _pool - The connection pool for the SQLite database.
  */
-class SQLite {
+export class SQLite {
     private static _pool: Pool<sqlite3.Database> | null = null; // Initialize _pool as possibly null
 
     /**
@@ -24,7 +23,7 @@ class SQLite {
         const factory = {
             create: function () {
                 return new Promise<sqlite3.Database>((resolve, reject) => {
-                    const db = new sqlite3.Database(USERS_DB, sqlite3.OPEN_READWRITE, (error) => {
+                    const db = new sqlite3.Database(fileSystem.USERS_DB, sqlite3.OPEN_READWRITE, (error) => {
                         if (error) {
                             console.error('SQLite connection error:', error);
                             reject(error);
@@ -212,5 +211,3 @@ class SQLite {
         });
     }
 }
-
-export default SQLite;

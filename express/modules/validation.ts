@@ -3,8 +3,8 @@
  * @description Provides a function to validate request parameters and request bodies. Additionally, it contains a set
  * of defined validation chains for the parameters and request bodies used in the application.
  */
-import { Request, Response, NextFunction, AsyncMiddleware, Middleware, MiddlewareArrayHandler } from '../types';
-import { Errors } from '../modules';
+import { Request, Response, NextFunction, AsyncMiddleware, Middleware } from '../src/types';
+import { Errors } from './index';
 import { validationResult } from 'express-validator';
 
 /**
@@ -12,7 +12,7 @@ import { validationResult } from 'express-validator';
  * @param middlewares - MiddlewareArrayHandler functions for validating request parameters.
  * @returns A single MiddlewareArrayHandler function that executes the provided validation MiddlewareArrayHandler and then checks for validation errors.
  */
-export const validate: MiddlewareArrayHandler = (...middlewares: Middleware[]): AsyncMiddleware => {
+export const validate = (...middlewares: Middleware[]): AsyncMiddleware => {
     return async (req: Request, res: Response, next: NextFunction) => {
         for (const middleware of middlewares) {
             // Use a promise to wait for potential async MiddlewareArrayHandler to complete.

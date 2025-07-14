@@ -1,5 +1,5 @@
-import { NextFunction, Request, Response, Middleware, ErrorMiddleware } from "../types";
-import { HTTP_STATUS } from "../constants";
+import { NextFunction, Request, Response, Middleware, ErrorMiddleware } from "../../src/types";
+import { HTTP_STATUS } from "./HTTP_STATUS";
 
 /**
  * @class Explicit error
@@ -49,7 +49,11 @@ export const notFoundHandler: Middleware = (_req: Request, _res: Response, next:
 /**
  * @function errorHandler - Handles errors by sending back a CustomError object as a response.
  */
-export const errorHandler: ErrorMiddleware = (error: Error, req: Request, res: Response, _next: NextFunction) => {
-    res.json(error);
-}
+export const errorHandler: ErrorMiddleware = (error: unknown, req: Request, res: Response, _next: NextFunction) => {
+    if (error instanceof CustomError) return res.json(error);
+    if (error instanceof SyntaxError && (error as any).type === "entity.parse.failed") {
+        return res.json(Errors.badRequest('Invalid JSON'));
+    }
+    res.json(Errors.internalServerError());
+};
 

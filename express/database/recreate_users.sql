@@ -9,23 +9,27 @@ DROP TABLE IF EXISTS user;
 
 CREATE TABLE IF NOT EXISTS "user"
 (
-    "id"   INTEGER,
-    "name" TEXT NOT NULL,
-    "email"     TEXT NOT NULL,
+    "id"       INTEGER,
+    "name"     TEXT NOT NULL,
+    "email"    TEXT NOT NULL UNIQUE,
+    "password" TEXT NOT NULL,
     PRIMARY KEY ("id" AUTOINCREMENT)
 );
 
 CREATE TABLE IF NOT EXISTS "admin"
 (
-    "pin"  INTEGER,
+    "pin"        INTEGER,
     "credential" TEXT NOT NULL,
     PRIMARY KEY ("pin" AUTOINCREMENT)
 );
 
 -- INSERT TEST DATA
 
-INSERT INTO "user" ("name", "email")
-VALUES ('klelto', 'M'); --user_id = 1
+INSERT INTO "user" ("name", "email", "password")
+VALUES ('klelto', 'M@M.com', 'crazyone');
+
+INSERT INTO "user" ("name", "email", "password")
+VALUES ('susy', 's@e.com', 'papi');
 
 INSERT INTO "admin" ("credential")
 VALUES ('$2b$10$JulaLQGweV/otn/RvFa.9OPQGjCtv2oG1dVeF6e5q6h8XN3C5.Dp2'); --credential = admin

@@ -3,7 +3,7 @@
  * @description This module provides global access to the absolute path of a resource folder.
  */
 import path from 'path';
-import { RELATIVE_PATHS } from '../constants';  // Correct import for the default class
+import { RELATIVE_PATHS } from '../src/constants';  // Correct import for the default class
 
 
 export const fileSystem = new Proxy<{ [key: string]: string }>( {}, {

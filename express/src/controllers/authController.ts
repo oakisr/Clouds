@@ -1,41 +1,24 @@
-import { Request, Response, NextFunction, Middleware } from "../types"; // Types
+import type { Request, Response, NextFunction, Middleware } from "../types"; // Types
 import { User } from "../models";
-import { validate, Errors } from "../modules"
-
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-
-// Load environment variables
-const authKey: string | undefined = process.env.AUTHORIZATION_KEY;
-const jwtSecret: string | undefined = process.env.JWT_SECRET_KEY;
-
-// Number of salt rounds for hashing
-const saltRounds = 10;
+import { authentication, validate, Errors } from "../../modules"
 
 /**
  * Register a new admin account with a hashed credential and return the admin pin.
  * It requires an authorization key to be present in the environment variables.
  */
-export const register: Middleware[] = [
-    validate(User.body.name, User.body.email, User.body.password),
-    async (req: Request, res: Response, next: NextFunction) => {
-        // Compare given and stored authorization key
-        const { name, email, password } = req.body;
-        console.log(name);
-        console.log(email);
-        console.log(password);
-        res.status(200).json({ name, email, password });
-        // const isKeyCorrect = await bcrypt.compare(authorizationKey, authKey);
-        // if (!isKeyCorrect) {
-        //     return next(Errors.unauthorized);
-        // }
-        //
-        // // Create and store new hashed admin credential
-        // const newHashedCredential = await bcrypt.hash(credential, saltRounds);
-        // const newAdminPin = await db.insertOne('INSERT INTO admin (credential) VALUES (?)', [newHashedCredential]);
-        // res.json(newAdminPin.toString());
-    }
-];
+// export const registerUser: Middleware[] = [
+//     validate(User.body.name, User.body.email, User.body.password),
+//     async (req: Request, res: Response, next: NextFunction) => {
+//         const { name, email, password } = req.body;
+//         const authenthicableUser = new User().createAuthenthicable(email, password, { name });
+//         const newUser: object = await authentication.register(authenthicableUser);
+//         if (!newUser) {
+//             return next(Errors.badRequest);
+//         }
+//         res.status(200).json(newUser);
+//
+//     }
+// ];
 
 /**
  * Verify admin credentials and return a JWT token.

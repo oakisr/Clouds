@@ -1,14 +1,53 @@
+import type { authenthicable, Get, Insert } from "../types";
 import { body as _body, param as _param } from "express-validator";
 import { INVALID } from "../constants";
-import { userRepository } from "../repositories";
+import { SQLRepository } from "../repositories";
 
-export class User {
-    id: number = 0;
+export class User implements authenthicable {
+    static tableName = "user";
+    id?: number;
     name: string = "";
     email: string = "";
-    password?: string = "";
+    password: string = "";
+
+    // Authenthicable methods
+
+    createAuthenthicable(credential: string, password: string, otherProperties: Record<string, any>): authenthicable {
+        const authenthicableUser = new User();
+        authenthicableUser.email = credential;
+        authenthicableUser.password = password;
+        if('name' in otherProperties) {
+            authenthicableUser.name = otherProperties.name;
+        }
+        return authenthicableUser;
+    }
+
+    getTableName(): string {
+        return User.tableName;
+    }
+
+    getCredentialName(): string {
+        return "email";
+    }
+
+    getCredential(): string {
+        return this.email;
+    }
+
+    getPassword(): string {
+        return this.password;
+    }
+
+    async checkIfExists(): Promise<boolean> {
+        return !!(await SQLRepository.checkIfExists(this));
+    }
+
+    async register(): Promise<number> {
+        return Promise.resolve(0);
+    }
 
     // Validation rules
+
     static param = {
         id: _param("id")
             .notEmpty().withMessage(INVALID.required)
@@ -31,8 +70,9 @@ export class User {
             .isLength({ min: 8 }).withMessage("Password must be at least 8 characters long.")
     };
 
-    // Methods
-    static async getById(id: number): Promise<User> {
-        return userRepository.getById(id);
-    }
+    // Api Methods
+
+    static get: Get<User> = SQLRepository.functionGet<User>(this.tableName);
+    static insert: Insert<User> = SQLRepository.functionInsert<User>(this.tableName);
+
 }

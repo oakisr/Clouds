@@ -113,7 +113,7 @@ export class SQLite {
      * @param values - An array of parameter values
      * @return Promise<any> - A promise that resolves with a single row
      */
-    static async queryOne(statement: string, values: any[]): Promise<any> {
+    static async query(statement: string, values: any[]): Promise<any> {
         const db = await SQLite.acquire();
         return new Promise((resolve, reject) => {
             db.get(statement, values, (err, row) => {
@@ -134,7 +134,7 @@ export class SQLite {
      * @param valuesArray - An array of parameter value arrays
      * @return Promise<insertedIds> - A promise that resolves with an array of IDs of the last inserted rows
      */
-    static async insertAll(statement: string, valuesArray: any[][]): Promise<{ insertedIds: number[] }> {
+    static async insertAll(statement: string, valuesArray: any[][]): Promise<number[]> {
         const db = await SQLite.acquire();
         return new Promise((resolve, reject) => {
             db.run('BEGIN TRANSACTION', async (transactionError) => {
@@ -144,14 +144,12 @@ export class SQLite {
                 }
 
                 let insertedIds: number[] = [];
-
                 for (const values of valuesArray) {
                     db.run(statement, values, function (err) {
                         if (err) {
                             reject(err);
                             return;
                         }
-
                         // Retrieve the last inserted ID for each insertion
                         insertedIds.push(this.lastID);
                     });
@@ -161,7 +159,7 @@ export class SQLite {
                     if (commitError) {
                         reject(commitError);
                     } else {
-                        resolve({ insertedIds: insertedIds });
+                        resolve(insertedIds);
                     }
                     SQLite.release(db).catch(console.error);
                 });
@@ -176,7 +174,7 @@ export class SQLite {
      * @param values - An array of parameter values
      * @return Promise<number> - A promise that resolves with the ID of the last inserted row
      */
-    static async insertOne(statement: string, values: any[]): Promise<number> {
+    static async insert(statement: string, values: any[]): Promise<number> {
         const db = await SQLite.acquire();
         return new Promise((resolve, reject) => {
             db.run(statement, values, function (err) {
@@ -195,19 +193,20 @@ export class SQLite {
      * Returns the number of affected rows.
      * @param statement - SQL UPDATE or DELETE statement
      * @param values - An array of parameter values
-     * @return Promise<affectedRows> - A promise that resolves with the number of affected rows
+     * @return Promise<number> - A promise that resolves with the number of affected rows
      */
-    static async execute(statement: string, values: any[]): Promise<{ affectedRows: number }> {
+    static async execute(statement: string, values: any[]): Promise<number> {
         const db = await SQLite.acquire();
         return new Promise((resolve, reject) => {
             db.run(statement, values, function (err) {
                 if (err) {
                     reject(err);
                 } else {
-                    resolve({ affectedRows: this.changes });
+                    resolve(this.changes);
                 }
                 SQLite.release(db).catch(console.error);
             });
         });
     }
+
 }

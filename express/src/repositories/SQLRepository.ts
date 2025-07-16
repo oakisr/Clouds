@@ -8,10 +8,10 @@ export const getAll = async <T>(tableName: string): Promise<T[]> => {
                             FROM ${tableName}`);
 };
 
-export const get = async <T>(tableName: string, id: number): Promise<T> => {
+export const get = async <T>(tableName: string, value: number | string, attribute: string = 'id' ): Promise<T> => {
     return SQLite.query(`SELECT *
                          FROM ${tableName}
-                         WHERE id = ?`, [id]);
+                         WHERE ${attribute} = ?`, [value]);
 };
 
 export const insert = async <T extends object>(
@@ -73,8 +73,8 @@ export const checkIfExists = async (tableName:string, subject: authenthicable): 
 // Generic higher-order functions for CRUD operations
 
 export const functionGet = <T>(tableName: string) => {
-    return async (id: number): Promise<T> => {
-        return get<T>(tableName, id);
+    return async (value: number | string, attribute: string = 'id'): Promise<T> => {
+        return get<T>(tableName, value, attribute);
     };
 };
 

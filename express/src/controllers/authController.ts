@@ -3,19 +3,16 @@ import { User } from "../models";
 import { authentication, validate, Errors } from "../../modules"
 
 /**
- * Register a new admin account with a hashed credential and return the admin pin.
- * It requires an authorization key to be present in the environment variables.
+ * Register a new user
  */
 export const registerUser: Middleware[] = [
     validate(User.body.name, User.body.email, User.body.password),
     async (req: Request, res: Response, next: NextFunction) => {
         const { name, email, password } = req.body;
-        const user = new User(email, password, name);
-        const newUser: number = await authentication.register(user);
-        if (!newUser) {
-            return next(Errors.notFound());
-        }
-        res.status(200).json(newUser);
+        const user = new User(email, password, { name });
+        const userID: number = await authentication.register(user);
+        if (!userID) return next(Errors.badRequest());
+        res.status(200).json(userID);
     }
 ];
 
@@ -23,64 +20,43 @@ export const registerUser: Middleware[] = [
  * Verify admin credentials and return a JWT token.
  * It requires a JWT secret key to be present in the environment variables.
  */
-// static login: Middleware[] = [
-//     validate(adminPin, credential),
-//     async (req: Request, res: Response, next: NextFunction) => {
-//
-//             // Verify if JWT secret key is present
-//             if (jwtSecret === undefined) {
-//                 console.log("here")
-//                 return next(Errors.unauthorizedAccess);
-//
-//             }
-//             // Query admin profile from database
-//             const { adminPin, credential } = req.body;
-//             const searchResult: Admin = await db.queryOne('SELECT * FROM admin WHERE admin_pin = ?', [adminPin]);
-//             if (!searchResult) {
-//                 return next(Errors.badRequest);
-//             }
-//
-//             // Compare credential from database with input
-//             const isCredentialCorrect = await bcrypt.compare(credential, searchResult.credential);
-//             if (!isCredentialCorrect) {
-//                 return next(Errors.badRequest);
-//             }
-//
-//             // Create and respond with JWT token
-//             const token = jwt.sign({ adminPin: searchResult.admin_pin }, jwtSecret, { expiresIn: '1h' });
-//             res.json({ token: token });
-//         }
-// ];
+export const loginUser: Middleware[] = [
+    validate(User.body.email, User.body.password),
+    async (req: Request, res: Response, next: NextFunction) => {
+        const { email, password } = req.body;
+        const user = new User(email, password);
+        const userToken: number = await authentication.login(user);
+        if (!userToken) return next(Errors.notFound());
+        res.json(userToken);
+    }
+];
+
+/**
+ * Remove a user
+ */
+export const removeUser: Middleware[] = [
+    validate(User.param.id),
+    async (req: Request, res: Response, next: NextFunction) => {
 
 
-//
-//     /**
-//      * Remove an admin account and return the number of affected rows.
-//      */
-//     static remove: Middleware[] = [
-//         validate(adminPin, authorizationKey),
-// async (req: Request, res: Response, next: NextFunction) => {
-//                 // Verify if authorization key is present
-//                 if (authKey === undefined) {
-//                     return next(new ExpectedError('Unauthorized access', 401));
-//                 }
-//
-//                 // Compare given and stored authorization key
-//                 const { adminPin, authorizationKey } = req.body;
-//                 console.log(authKey);
-//                 console.log(authorizationKey);
-//                 const isKeyCorrect = await bcrypt.compare(authorizationKey, authKey);
-//                 if (!isKeyCorrect) {
-//                     return next(new ExpectedError('Authorization key is invalid', 400));
-//                 }
-//
-//                 // Remove admin profile from database
-//                 const response = await db.execute('DELETE FROM admin WHERE admin_pin = ?', [adminPin]);
-//                 console.log(response.affectedRows.toString());
-//                 res.json(response.affectedRows.toString());
-//             }
-//     ];
-//
+        // // Compare given and stored authorization key
+        // const { adminPin, authorizationKey } = req.body;
+        // console.log(authKey);
+        // console.log(authorizationKey);
+        // const isKeyCorrect = await bcrypt.compare(authorizationKey, authKey);
+        // if (!isKeyCorrect) {
+        //     return next(new ExpectedError('Authorization key is invalid', 400));
+        // }
+        //
+        // // Remove admin profile from database
+        // const response = await db.execute('DELETE FROM admin WHERE admin_pin = ?', [adminPin]);
+        // console.log(response.affectedRows.toString());
+        // res.json(response.affectedRows.toString());
+        res.json({ message: "Removing user " + req.params.id });
+    }
+];
+
+
 //     /**
 //      * Middleware to authenticate the user.
 //      * It verifies the JWT token and sets the adminID in the request object.

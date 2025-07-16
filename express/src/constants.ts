@@ -26,3 +26,6 @@ export const INVALID = {
     string: 'must be a string.',
 }
 
+// Authentication
+//TODO: Move jwtSecret to a secure location, e.g. environment variable or aws secrets etc
+export const jwtSecret: string = 'mousy';

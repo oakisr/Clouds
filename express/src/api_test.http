@@ -1,0 +1,25 @@
+### Get user 1
+GET http://localhost:3000/api/users/2
+
+### Register a new user
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+  "id": 1,
+  "name": "sip",
+  "email": "www@M.com",
+  "password": "crazyone"
+}
+
+### Log in a user
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "www@M.com",
+  "password": "crazyone"
+}
+
+### Delete a user
+DELETE http://localhost:3000/api/auth/13

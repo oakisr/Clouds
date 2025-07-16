@@ -11,12 +11,11 @@ export class User extends BaseModel implements authenthicable {
     email: string = "";
     password: string = "";
 
-    constructor(...properties: string[]) {
+    constructor(email: string, password: string, properties?: Record<string, any>) {
         super();
-        const [email, password, name] = properties;
-        if (email) this.email = email;
-        if (password) this.password = password;
-        if (name) this.name = name;
+        this.email = email;
+        this.password = password;
+        if (properties && 'name' in properties) this.name = properties.name;
     }
 
     // Validation rules
@@ -51,7 +50,7 @@ export class User extends BaseModel implements authenthicable {
     // Authenthicable methods
 
     isAuthenthicable(): boolean {
-        return !!(this.email && this.password);
+        return !!(this.getLogin() && this.getPassword());
     }
 
     getLoginType(): "username" | "email" {
@@ -59,7 +58,7 @@ export class User extends BaseModel implements authenthicable {
     }
 
     getLogin(): string {
-        return this.email;
+        return this[this.getLoginType() as keyof this] as string;
     }
 
     getPassword(): string {
@@ -70,9 +69,12 @@ export class User extends BaseModel implements authenthicable {
         return !!(await SQLRepository.checkIfExists(User.getTableName(), this));
     }
 
+    async checkCredentials(): Promise<User> {
+        return await User.get(this.getLogin(), this.getLoginType());
+    }
+
     async register(HashedPassword: string): Promise<number> {
         this.password = HashedPassword;
         return await User.insert(this);
     }
-
 }

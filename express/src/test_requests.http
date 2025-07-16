@@ -1,0 +1,14 @@
+### Send GET request
+GET http://localhost:3000/api/users/1
+
+### Send POST request with json body
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+  "id": 1,
+  "name": "klelto",
+  "email": "w@M.com",
+  "password": "crazyone"
+}
+

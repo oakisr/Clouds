@@ -2,48 +2,21 @@ import type { authenthicable, Get, Insert } from "../types";
 import { body as _body, param as _param } from "express-validator";
 import { INVALID } from "../constants";
 import { SQLRepository } from "../repositories";
+import { BaseModel } from "./BaseModel";
 
-export class User implements authenthicable {
+export class User extends BaseModel implements authenthicable {
     static tableName = "user";
     id?: number;
     name: string = "";
     email: string = "";
     password: string = "";
 
-    // Authenthicable methods
-
-    createAuthenthicable(credential: string, password: string, otherProperties: Record<string, any>): authenthicable {
-        const authenthicableUser = new User();
-        authenthicableUser.email = credential;
-        authenthicableUser.password = password;
-        if('name' in otherProperties) {
-            authenthicableUser.name = otherProperties.name;
-        }
-        return authenthicableUser;
-    }
-
-    getTableName(): string {
-        return User.tableName;
-    }
-
-    getCredentialName(): string {
-        return "email";
-    }
-
-    getCredential(): string {
-        return this.email;
-    }
-
-    getPassword(): string {
-        return this.password;
-    }
-
-    async checkIfExists(): Promise<boolean> {
-        return !!(await SQLRepository.checkIfExists(this));
-    }
-
-    async register(): Promise<number> {
-        return Promise.resolve(0);
+    constructor(...properties: string[]) {
+        super();
+        const [email, password, name] = properties;
+        if (email) this.email = email;
+        if (password) this.password = password;
+        if (name) this.name = name;
     }
 
     // Validation rules
@@ -72,7 +45,34 @@ export class User implements authenthicable {
 
     // Api Methods
 
-    static get: Get<User> = SQLRepository.functionGet<User>(this.tableName);
-    static insert: Insert<User> = SQLRepository.functionInsert<User>(this.tableName);
+    static get: Get<User> = SQLRepository.functionGet<User>(this.getTableName());
+    static insert: Insert<User> = SQLRepository.functionInsert<User>(this.getTableName());
+
+    // Authenthicable methods
+
+    isAuthenthicable(): boolean {
+        return !!(this.email && this.password);
+    }
+
+    getLoginType(): "username" | "email" {
+        return "email";
+    }
+
+    getLogin(): string {
+        return this.email;
+    }
+
+    getPassword(): string {
+        return this.password;
+    }
+
+    async checkIfExists(): Promise<boolean> {
+        return !!(await SQLRepository.checkIfExists(User.getTableName(), this));
+    }
+
+    async register(HashedPassword: string): Promise<number> {
+        this.password = HashedPassword;
+        return await User.insert(this);
+    }
 
 }

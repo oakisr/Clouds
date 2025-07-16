@@ -6,19 +6,18 @@ import { authentication, validate, Errors } from "../../modules"
  * Register a new admin account with a hashed credential and return the admin pin.
  * It requires an authorization key to be present in the environment variables.
  */
-// export const registerUser: Middleware[] = [
-//     validate(User.body.name, User.body.email, User.body.password),
-//     async (req: Request, res: Response, next: NextFunction) => {
-//         const { name, email, password } = req.body;
-//         const authenthicableUser = new User().createAuthenthicable(email, password, { name });
-//         const newUser: object = await authentication.register(authenthicableUser);
-//         if (!newUser) {
-//             return next(Errors.badRequest);
-//         }
-//         res.status(200).json(newUser);
-//
-//     }
-// ];
+export const registerUser: Middleware[] = [
+    validate(User.body.name, User.body.email, User.body.password),
+    async (req: Request, res: Response, next: NextFunction) => {
+        const { name, email, password } = req.body;
+        const user = new User(email, password, name);
+        const newUser: number = await authentication.register(user);
+        if (!newUser) {
+            return next(Errors.notFound());
+        }
+        res.status(200).json(newUser);
+    }
+];
 
 /**
  * Verify admin credentials and return a JWT token.

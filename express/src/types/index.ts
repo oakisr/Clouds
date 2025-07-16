@@ -16,4 +16,4 @@ export { Remove } from "./api/Remove";
 
 
 // Interfaces
-export { authenthicable } from "./interfaces/authenthicable";
+export { authenthicable } from "../../modules/Authenthication/authenthicable";

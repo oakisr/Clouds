@@ -1,8 +1,7 @@
 /**
  * @module Constants
- * @description This module is a global collection of constant values used throughout the application
- * such as server settings, fileSystem, descriptions, etc. Helping maintain a single source of truth and simplifying
- * maintenance and modification.
+ * @description This module is a global collection of constant values used throughout the application such as server
+ * settings, fileSystem, descriptions, etc. Helping maintain a single source of truth and simplifying configuration.
  */
 
 // Configuration
@@ -10,9 +9,9 @@ export enum ENVIRONMENT { 'development', 'production' }
 export const NODE_ENV: ENVIRONMENT = ENVIRONMENT.production;
 export const PORT: number = 3000;
 
-// Relative file system paths
+// Relative file paths
 export const RELATIVE_PATHS = {
-    USERS_DB: '../../database/users.db',
+    USERS_DB: '../database/users.db',
 };
 
 // Validation messages

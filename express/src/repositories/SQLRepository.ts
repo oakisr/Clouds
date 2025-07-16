@@ -63,10 +63,10 @@ export const remove = async (tableName: string, id: number): Promise<number> => 
                            WHERE id = ?`, [id]);
 };
 
-export const checkIfExists = async (subject: authenthicable): Promise<any> => {
+export const checkIfExists = async (tableName:string, subject: authenthicable): Promise<any> => {
     return SQLite.query(`SELECT 1
-                         FROM ${subject.getTableName()}
-                         WHERE ${subject.getCredentialName()} = ?`, [subject.getCredential()]);
+                         FROM ${tableName}
+                         WHERE ${subject.getLoginType()} = ?`, [subject.getLogin()]);
 };
 
 

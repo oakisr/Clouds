@@ -2,7 +2,7 @@ import express from 'express';
 import { PORT } from "./constants";
 import cors from 'cors';
 import * as routers from './routes';
-import { notFoundHandler, errorHandler, Errors } from '../modules';
+import { notFoundHandler, errorHandler } from '../modules';
 
 // Application setup
 const app = express();

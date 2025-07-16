@@ -19,11 +19,11 @@ export class Authenthicable implements authenthicable {
         return User.tableName;
     }
 
-    getCredentialName(): string {
+    getLoginType(): string {
         return "email";
     }
 
-    getCredential(): string {
+    getLogin(): string {
         return this.email;
     }
 

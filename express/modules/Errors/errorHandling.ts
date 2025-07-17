@@ -50,10 +50,12 @@ export const notFoundHandler: Middleware = (_req: Request, _res: Response, next:
  * @function errorHandler - Handles errors by sending back a CustomError object as a response.
  */
 export const errorHandler: ErrorMiddleware = (error: unknown, req: Request, res: Response, _next: NextFunction) => {
-    if (error instanceof CustomError) return res.json(error);
+    if (error instanceof CustomError) return res.status(error.statusCode).json(error);
     if (error instanceof SyntaxError && (error as any).type === "entity.parse.failed") {
-        return res.json(Errors.badRequest('Invalid JSON'));
+        const badRequest = Errors.badRequest('Invalid JSON');
+        return res.status(badRequest.statusCode).json(badRequest);
     }
-    res.json(Errors.internalServerError());
+    const internalError = Errors.internalServerError();
+    return res.status(internalError.statusCode).json(internalError);
 };
 

@@ -22,6 +22,8 @@ export const insert = async <T extends object>(
     const values = Object.values(subject);
     const placeholders = values.map(() => '?').join(', ');
 
+    console.log(columns);
+
     return SQLite.insert(
         `INSERT INTO ${tableName} (${columns})
          VALUES (${placeholders})`,

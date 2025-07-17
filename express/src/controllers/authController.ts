@@ -26,6 +26,7 @@ export const loginUser: Middleware[] = [
         const { email, password } = req.body;
         const user = new User(email, password);
         const userToken: number = await authentication.login(user);
+        console.log("E");
         if (!userToken) return next(Errors.notFound());
         res.json(userToken);
     }

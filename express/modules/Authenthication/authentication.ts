@@ -1,5 +1,4 @@
 import type { authenthicable } from "../../src/types";
-import { SQLite } from "../SQLite";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { Errors } from "../index";
@@ -12,14 +11,15 @@ const authKey: string | undefined = process.env.AUTHORIZATION_KEY;
 // Number of salt rounds for hashing
 const saltRounds = 10;
 
-export const register = async (subject: authenthicable): Promise<number> => {
+export const register = async (subject: any): Promise<number> => {
     // Verify if subject is in fact authenthicable
-    console.log('subject', subject);
+    const auth: authenthicable = subject as authenthicable;
     if (!subject.isAuthenthicable()) {
         throw Errors.badRequest('The subject is not authenthicable.');
     }
 
     // Verify if subject login credential is already taken
+    console.log(await subject.checkIfExists());
     if (await subject.checkIfExists()) {
         throw Errors.conflict('The ' + subject.getLoginType() + ' is already in use.');
     }

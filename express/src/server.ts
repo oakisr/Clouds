@@ -23,3 +23,11 @@ app.use(errorHandler);
 app.listen(PORT, () => {
     console.log(`Server is running at http://localhost:${PORT}`);
 });
+
+// // Testing
+// import { User } from "./models/User";
+// import { authentication } from "../modules"
+// // User.get(1).then(result => console.log(result));
+// // User.getAll().then(result => console.log(result));
+// const user = new User("MMM@MM.com", "cuchi", "pumpkin");
+// authentication.register(user).then(result => console.log(result));

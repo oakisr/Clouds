@@ -9,7 +9,7 @@ export const registerUser: Middleware[] = [
     validate(User.body.name, User.body.email, User.body.password),
     async (req: Request, res: Response, next: NextFunction) => {
         const { name, email, password } = req.body;
-        const user = new User(email, password, { name });
+        const user = new User(email, password, name);
         const userID: number = await authentication.register(user);
         if (!userID) return next(Errors.badRequest());
         res.status(200).json(userID);
@@ -37,7 +37,7 @@ export const loginUser: Middleware[] = [
  */
 export const removeUser: Middleware[] = [
     validate(User.param.id),
-    async (req: Request, res: Response, next: NextFunction) => {
+    async (req: Request, res: Response, _next: NextFunction) => {
 
 
         // // Compare given and stored authorization key

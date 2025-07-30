@@ -1,6 +1,5 @@
-import { BaseModel } from "./BaseModel";
 
-export class Admin extends BaseModel {
+export class Admin  {
     static tableName = "admin";
     id: number = 0;
     credential: string = "";

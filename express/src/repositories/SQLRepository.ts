@@ -1,4 +1,3 @@
-import type { authenthicable } from "../types";
 import { SQLite } from "../../modules";
 
 // Generic CRUD operations for SQLite database
@@ -63,9 +62,9 @@ export const remove = async (tableName: string, value: number | string, attribut
                            WHERE ${attribute} = ?`, [value]);
 };
 
-export const checkIfExists = async (tableName: string, loginType: "username" | "email", login: string): Promise<any> => {
-    return SQLite.query(`SELECT 1
-                         FROM ${tableName}
-                         WHERE ${loginType} = ?`, [login]);
+export const checkIfExists = async (tableName: string, loginType: "username" | "email", login: string): Promise<boolean> => {
+    return !!(await SQLite.query(`SELECT 1
+                                  FROM ${tableName}
+                                  WHERE ${loginType} = ?`, [login]));
 };
 

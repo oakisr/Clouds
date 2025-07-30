@@ -6,12 +6,12 @@ import { authentication, validate, Errors } from "../../modules"
  * Register a new user
  */
 export const registerUser: Middleware[] = [
-    validate(User.body.name, User.body.email, User.body.password),
+    validate(User.body.email, User.body.password, User.body.name),
     async (req: Request, res: Response, next: NextFunction) => {
         const { name, email, password } = req.body;
         const user = new User(email, password, name);
         const userID: number = await authentication.register(user);
-        if (!userID) return next(Errors.badRequest());
+        if (!userID) return next(Errors.badRequest("User registration failed."));
         res.status(200).json(userID);
     }
 ];
@@ -25,9 +25,8 @@ export const loginUser: Middleware[] = [
     async (req: Request, res: Response, next: NextFunction) => {
         const { email, password } = req.body;
         const user = new User(email, password);
-        const userToken: number = await authentication.login(user);
-        console.log("E");
-        if (!userToken) return next(Errors.notFound());
+        const userToken: string = await authentication.login(user);
+        if (!userToken) return next(Errors.notFound("User not found or invalid credentials."));
         res.json(userToken);
     }
 ];

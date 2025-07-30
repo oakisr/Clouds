@@ -6,9 +6,8 @@ POST http://localhost:3000/api/auth/register
 Content-Type: application/json
 
 {
-  "id": 1,
-  "name": "sip",
-  "email": "www@M.com",
+  "name": "susy",
+  "email": "s@e.com",
   "password": "crazyone"
 }
 
@@ -17,7 +16,7 @@ POST http://localhost:3000/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "www@M.com",
+  "email": "s@e.com",
   "password": "crazyone"
 }
 
